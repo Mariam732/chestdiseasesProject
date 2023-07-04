@@ -235,16 +235,16 @@ res.json({message:"Image is updated successfully"})
 //to get all images path that user inserts it
 app.get('/showAllImages',async(req,res)=>{
   let userID=req.header('userID');
-  //let token = req.header('token');
- // jwt.verify(token ,'mariam',async(err,decoded)=>{
-  //  if(err){
-   //   res.json({err});
-   // } else{
-// }
+  let token = req.header('token');
+ jwt.verify(token ,'mariam',async(err,decoded)=>{
+   if(err){
+     res.json({err});
+   } else{
+ 
       let  images = await singleFileModel.find({userID});
       res.json(images); 
-    
- // })  
+}
+  })  
   })
 
 
