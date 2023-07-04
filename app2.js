@@ -71,8 +71,9 @@ app.post('/login', async(req,res)=>{
     const match = await bcrypt.compare(password, data.password);
     if(match){
       //token the same as authenication
-   let token = jwt.sign({data:data._id , role:"user"}, 'mariam')
-     res.json(token);
+   // let token = jwt.sign({data:data._id , role:"user"}, 'mariam')
+   //   res.json(token);
+      res.json({userID:data._id});
     }
     else {
       res.json({message: "Wrong password"});
@@ -114,7 +115,7 @@ const storage = multer.diskStorage({
 const upload = multer ({storage:storage,fileFilter}).single('profile');
 
 
-app.post('/uploadImg',upload,auth, async(req,res)=>{
+app.post('/uploadImg',upload, async(req,res)=>{
 try {
    const{userID}=req.body
   console.log(req.file)
@@ -187,7 +188,7 @@ try {
 
 
    //delete users
-app.delete('/delete',auth ,async (req,res)=>{
+app.delete('/delete' ,async (req,res)=>{
   try {
     console.log(req.body);
   const{_id} = req.body;
@@ -202,7 +203,7 @@ app.delete('/delete',auth ,async (req,res)=>{
 
 
 //delete img
-app.delete('/deleteImg',auth,async (req,res)=>{
+app.delete('/deleteImg',async (req,res)=>{
   try {
     console.log(req.body);
   const{_id} = req.body;
@@ -215,7 +216,7 @@ app.delete('/deleteImg',auth,async (req,res)=>{
   
 })
 //update img
-app.put('/updateImg',auth,async(req,res)=>{ 
+app.put('/updateImg',async(req,res)=>{ 
 try {
   const{_id}=req.body 
 //const{path}=req.file 
@@ -233,15 +234,16 @@ res.json({message:"Image is updated successfully"})
 //to get all images path that user inserts it
 app.get('/showAllImages',async(req,res)=>{
   let userID=req.header('userID');
-  let token = req.header('token');
-  jwt.verify(token ,'mariam',async(err,decoded)=>{
-    if(err){
-      res.json({err});
-    } else{
+  //let token = req.header('token');
+ // jwt.verify(token ,'mariam',async(err,decoded)=>{
+  //  if(err){
+   //   res.json({err});
+   // } else{
+}
       let  images = await singleFileModel.find({userID});
       res.json(images); 
-    }
-  })  
+    
+ // })  
   })
 
 
