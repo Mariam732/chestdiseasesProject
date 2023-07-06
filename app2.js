@@ -19,7 +19,7 @@ const path = require("path");
 
 //jwt
 const jwt = require('jsonwebtoken');
-
+app.use('/upload/images', express.static(__dirname + '/upload/images'));
 
 //how to connect mongoo db with node js ?
 const mongoose = require('mongoose');
@@ -114,31 +114,33 @@ const storage = multer.diskStorage({
 
 const upload = multer ({storage:storage,fileFilter}).single('profile');
 
-
-app.post('/uploadImg',upload,authi, async(req,res)=>{
+app.post('/uploadImg', upload, async (req, res) => {
   try {
-     const{userID}=req.body
-    console.log(req.file)
-    console.log(req.userID);
-    
-    
-    await singleFileModel.insertMany({
-     path:req.file.path ,
-     userID
+    const token = req.headers.authorization?.split(' ')[1]
+    jwt.verify(token, 'mariam', async (err, decoded) => {
+      if (err) {
+        res.json({ err });
+      } else {
+        console.log(decoded)
+        const userID = decoded.data;
+        await singleFileModel.insertMany({
+          path: req.file.path,
+          userID: userID
+        })
+        const { file } = req;
+        res.send({
+          file: file.originalname,
+          path: file.path,
+        })
+      }
     })
-     const{file}= req;
-    res.send({
-      file:file.originalname,
-      path:file.path, 
-  
-    })
-    
   } catch (error) {
-    res.json({error})
+    res.json({ error })
   }
-  
-  })
-  
+})
+
+
+
 
 
 
